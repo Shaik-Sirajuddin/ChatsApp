@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OTPActivity">
+    <ImageView
+        android:id="@+id/otp_image"
+        android:layout_width="200dp"
+        android:layout_height="0dp"
+        android:src="@drawable/otp_verify"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textVerify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verify OTP"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/otp_image"
+        app:layout_constraintStart_toStartOf="@+id/otp_image"
+        app:layout_constraintTop_toBottomOf="@+id/otp_image" />
+
+    <TextView
+        android:id="@+id/textV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:gravity="center"
+        android:text="Enter the OTP sent to your phone number to complete verification"
+        app:layout_constraintTop_toBottomOf="@id/textVerify"
+        app:layout_constraintEnd_toEndOf="@+id/textVerify"
+        app:layout_constraintStart_toStartOf="@+id/textVerify"/>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="6dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textV">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical"
+            android:padding="4dp">
+
+            <com.mukesh.OtpView
+                android:id="@+id/otpVw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:focusableInTouchMode="true"
+                android:inputType="number"
+                android:itemBackground="@color/purple_700"
+                android:padding="10dp"
+                android:textColor="@android:color/white"
+                app:OtpItemCount="6"
+                app:OtpLineColor="@color/grey"
+                app:OtpViewType="line" />
+
+            <Button
+                android:visibility="gone"
+                android:id="@+id/continueBut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#4CAF50"
+                android:text="ReEnter Phone Number"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/didnt"
+        android:text="@string/didn_t_receive_otp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="15sp"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="#CC0F01"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardView"
+        />
+
+    <TextView
+        android:id="@+id/resend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Resend OTP"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:clickable="false"
+        app:layout_constraintEnd_toEndOf="@+id/didnt"
+        app:layout_constraintStart_toStartOf="@+id/didnt"
+        app:layout_constraintTop_toBottomOf="@id/didnt" />
+    <ProgressBar
+        android:elevation="100dp"
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.165234375" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/drawable/bottom_navigation_selector.xml" value="0.165234375" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/drawable/ic_baseline_call_24.xml" value="0.1" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/drawable/ic_search_black_24dp.xml" value="0.165234375" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/drawable/phone_number_input.xml" value="0.1" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/drawable/receiver_msg_back.xml" value="0.165234375" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/drawable/send_back.xml" value="0.18076923076923077" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/drawable/send_msg_back.xml" value="0.165234375" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/drawable/splash_image.xml" value="0.12" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/activity_chat.xml" value="0.25" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/activity_main.xml" value="0.15" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/activity_otpacticity.xml" value="0.1" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/activity_otpactivity.xml" value="0.18" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/activity_phone_number.xml" value="0.18" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/activity_profile_set_up.xml" value="0.153125" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/chats_layout_item.xml" value="0.16" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/content_otpacticity.xml" value="0.1" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/demo_chat.xml" value="0.153125" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/demo_status.xml" value="0.153125" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/fragment_second.xml" value="0.1" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/receiver_item.xml" value="0.2" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/sender_item.xml" value="0.16" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/text_msg.xml" value="0.22" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/layout/top_status_item.xml" value="0.153125" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/menu/nav_menu.xml" value="0.153125" />
+        <entry key="..\:/Users/Siraj/AndroidStudioProjects/ChatsApp/app/src/main/res/menu/topmenu.xml" value="0.153125" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

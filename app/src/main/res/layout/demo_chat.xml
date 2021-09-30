@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="7dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?selectableItemBackground"
+    >
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/circleImageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/profile"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:background="@color/grey"
+        android:id="@id/chatName"
+        android:layout_width="0dp"
+        android:layout_height="12dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="@string/app_name"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/chatTime"
+        app:layout_constraintStart_toEndOf="@+id/circleImageView"
+        app:layout_constraintTop_toTopOf="@id/circleImageView" />
+
+    <View
+        android:background="@color/grey"
+        android:layout_marginStart="10dp"
+        android:layout_width="0dp"
+        android:layout_height="12dp"
+        android:id="@+id/lastChat"
+        app:layout_constraintEnd_toEndOf="@id/chatTime"
+        app:layout_constraintBottom_toBottomOf="@id/circleImageView"
+        app:layout_constraintStart_toEndOf="@id/circleImageView"
+        app:layout_constraintTop_toBottomOf="@id/chatName"
+        />
+    <View
+        android:background="@color/grey"
+        android:id="@+id/chatTime"
+        android:layout_marginStart="10dp"
+        app:layout_goneMarginTop="4dp"
+        android:layout_width="50dp"
+        android:layout_height="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/circleImageView"
+        android:layout_marginTop="5dp"
+
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="#B6B6B6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/circleImageView"
+        app:layout_constraintTop_toBottomOf="@id/circleImageView" />
+</androidx.constraintlayout.widget.ConstraintLayout>
