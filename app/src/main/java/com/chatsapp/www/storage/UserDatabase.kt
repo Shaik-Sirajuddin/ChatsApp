@@ -6,9 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.chatsapp.www.Models.Chat
+import com.chatsapp.www.Models.ModMessage
 import com.chatsapp.www.Models.User
 
-@Database(entities = [User::class,Chat::class],version = 1,exportSchema = false)
+@Database(entities = [User::class,Chat::class,ModMessage::class],version = 1,exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class UserDatabase:RoomDatabase(){
 

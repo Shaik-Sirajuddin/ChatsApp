@@ -71,7 +71,7 @@ class ProfileSetUpActivity : AppCompatActivity() {
         val user = User()
         user.profileImage = image
         user.phoneNumber = mAuth.currentUser?.phoneNumber
-        user.uid = mAuth.uid
+        user.uid = mAuth.uid!!
         user.userName = binding.userName.editableText.toString()
         database.reference.child("Users").child(mAuth.uid.toString()).setValue(user).await()
         withContext(Dispatchers.Main) {

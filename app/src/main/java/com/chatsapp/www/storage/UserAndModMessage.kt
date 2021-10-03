@@ -2,15 +2,15 @@ package com.chatsapp.www.storage
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.chatsapp.www.Models.Chat
+import com.chatsapp.www.Models.ModMessage
 import com.chatsapp.www.Models.User
 
-data class UserAndChat(
+data class UserAndModMessage(
     @Embedded
-    val user:User,
+    val user: User,
     @Relation(
         parentColumn = "uid",
-        entityColumn = "userId"
+        entityColumn = "chatRoomId"
     )
-    val chat: Chat?
+    val modMessage: ModMessage
 )

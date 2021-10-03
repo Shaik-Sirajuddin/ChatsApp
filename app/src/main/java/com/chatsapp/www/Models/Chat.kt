@@ -8,5 +8,6 @@ data class Chat(
     @PrimaryKey(autoGenerate = true)
     var key:Int = 0,
     var messages:ArrayList<Message>?=null,
-    var userId:String? = null
+    var userId:String? = null,
+    var lastMsg:Message? = null
 )

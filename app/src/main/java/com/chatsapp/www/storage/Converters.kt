@@ -13,4 +13,9 @@ class Converters {
 
     @TypeConverter
     fun toList(value: String) = Json.decodeFromString<ArrayList<Message>>(value)
+    @TypeConverter
+    fun fromMessage(value : Message) = Json.encodeToString(value)
+
+    @TypeConverter
+    fun toMessage(value: String) = Json.decodeFromString<Message>(value)
 }

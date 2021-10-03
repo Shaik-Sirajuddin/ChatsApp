@@ -11,16 +11,16 @@ import android.text.TextWatcher
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.AuthFailureError
-import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.bumptech.glide.Glide
-import com.chatsapp.www.Models.Message
 import com.chatsapp.www.Adapters.MessagesAdapter
-import com.chatsapp.www.Models.MySingleton
+import com.chatsapp.www.Models.*
 import com.chatsapp.www.databinding.ActivityChatBinding
+import com.chatsapp.www.storage.FirebaseQueryLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
@@ -34,22 +34,22 @@ import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import com.android.volley.VolleyError
-import com.chatsapp.www.Models.CurrentUser
+import com.chatsapp.www.storage.UserViewModel
 
 
 class ChatActivity : AppCompatActivity() {
     private lateinit var binding:ActivityChatBinding
     private lateinit var adapter: MessagesAdapter
-    private lateinit var senderRoom:String
-    private lateinit var receiverRoom:String
     private lateinit var dataBase:FirebaseDatabase
     private lateinit var mAuth:FirebaseAuth
     private lateinit var storage:FirebaseStorage
-    private  var receiverUid:String? = null
+    private val messageList = ArrayList<Message>()
+    private lateinit var receiverUid:String
     private var name:String? = null
     private var token:String? = null
     private var flag:Boolean = false
+    private lateinit var viewModel:UserViewModel
+    private var liveData:FirebaseQueryLiveData? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
@@ -57,78 +57,57 @@ class ChatActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         val intent = intent
         name = intent.getStringExtra("name")
-        receiverUid = intent.getStringExtra("uid")
+        receiverUid = intent.getStringExtra("uid")!!
         val userImage = intent.getStringExtra("userImage")
         token = intent.getStringExtra("token")
         binding.chatName.text = name
         if(userImage!=null){
             Glide.with(this).load(userImage).placeholder(R.drawable.profile).into(binding.chatImage)
         }
+        isStopped = false
+        viewModel = ViewModelProvider(this)[UserViewModel::class.java]
         mAuth = FirebaseAuth.getInstance()
         storage = FirebaseStorage.getInstance()
         val senderUid:String = mAuth.uid!!
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        senderRoom = senderUid+receiverUid
-        receiverRoom = receiverUid+senderUid
-        adapter = MessagesAdapter(this,senderRoom,receiverRoom)
+        adapter = MessagesAdapter(this,messageList)
         val layout = LinearLayoutManager(this)
         binding.chatRecycle.layoutManager = layout
         binding.chatRecycle.adapter = adapter
+        GlobalScope.launch {
+           val chat =  viewModel.getRepository().getChatOfUser(receiverUid)
+            chat.chat?.messages?.let { messageList.addAll(it) }
+            withContext(Dispatchers.Main) {
+                adapter.notifyDataSetChanged()
+                if(messageList.size>0) {
+                    binding.chatRecycle.smoothScrollToPosition(messageList.size - 1)
+                }
+                liveData = viewModel.getMessagesLiveData(
+                    dataBase.reference.child("Chats").child(mAuth.uid!!).child(receiverUid)
+                        .child("messages")
+                )
+                liveData?.observe(this@ChatActivity,{
+                    if(it == null) return@observe
+                    val message = it.getValue<Message>()
+                    messageReceived(message)
+                    dataBase.reference.child("Chats").child(mAuth.uid!!).child(receiverUid)
+                        .child("messages").child(it.key.toString()).removeValue()
+                })
+            }
+        }
+
         dataBase = FirebaseDatabase.getInstance()
         binding.sendButton.setOnClickListener{
             val msg = binding.editText.editableText.toString()
             if(msg.isEmpty())return@setOnClickListener
-            val message = Message(adapter.getSize(),msg,Date().time,senderUid)
-            GlobalScope.launch {
-                sendMessage(message)
-            }
+            val message = Message(message = msg,timeStamp = Date().time,senderId = senderUid)
             binding.editText.setText("")
+            sendMessage(message)
         }
-      dataBase.reference
-           .child("Chats")
-           .child(senderRoom)
-           .child("Messages")
-           .addChildEventListener(object:ChildEventListener{
-             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                 try {
-                     val msg = snapshot.getValue<Message>()
-                     if (msg != null) {
-                         adapter.addData(msg,msg.msgPos)
-                         binding.chatRecycle.smoothScrollToPosition(msg.msgPos)
-                     }
-                 }catch (e:Exception){
-                     Log.e("childAdded",e.message.toString())
-                 }
-             }
-
-             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                 try {
-                     val msg = snapshot.getValue<Message>()
-                     if (msg != null) {
-                         adapter.messageChanged(msg)
-                     }
-                 }catch (e:Exception){
-                     Log.e("childChanged",e.message.toString())
-                 }
-             }
-
-             override fun onChildRemoved(snapshot: DataSnapshot) {
-
-             }
-
-             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-
-             }
-
-             override fun onCancelled(error: DatabaseError) {
-
-             }
-
-         })
         binding.fileLink.setOnClickListener {
-            val inte = Intent(Intent.ACTION_GET_CONTENT)
-            inte.type = "image/*"
-            resultLauncher.launch(inte)
+            val intent2= Intent(Intent.ACTION_GET_CONTENT)
+            intent2.type = "image/*"
+            resultLauncher.launch(intent2)
         }
         binding.chatBackButton.setOnClickListener {
             finish()
@@ -146,19 +125,19 @@ class ChatActivity : AppCompatActivity() {
             override fun afterTextChanged(p0: Editable?) {
                 val map = HashMap<String,Any>()
                 map["status"] = "typing..."
-                map["room"] = receiverUid!!
+                map["room"] = receiverUid
                 dataBase.reference.child("Presence").child(mAuth.uid!!).updateChildren(map)
                 handler.removeCallbacksAndMessages(null)
                 handler.postDelayed({
-                    val map = HashMap<String,Any>()
-                    map["status"] = "Online"
-                    map["room"] = receiverUid!!
-                    dataBase.reference.child("Presence").child(mAuth.uid!!).updateChildren(map)
+                    val map1 = HashMap<String,Any>()
+                    map1["status"] = "Online"
+                    map1["room"] = receiverUid
+                    dataBase.reference.child("Presence").child(mAuth.uid!!).updateChildren(map1)
                 },1500)
             }
 
         })
-        dataBase.reference.child("Presence").child(receiverUid!!).addValueEventListener(object:ValueEventListener{
+        dataBase.reference.child("Presence").child(receiverUid).addValueEventListener(object:ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists()){
                     var i = 1
@@ -187,17 +166,36 @@ class ChatActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-
             }
 
         })
+    }
+    private fun messageReceived(message: Message?) {
+       if(message==null)return
+        messageList.add(message)
+        adapter.notifyItemInserted(messageList.size-1)
+        binding.chatRecycle.smoothScrollToPosition(messageList.size-1)
+        GlobalScope.launch {
+            viewModel.updateModMessage(ModMessage(receiverUid,true,message))
+            val chat: Chat? = viewModel.getRepository().getChatOfUser(receiverUid).chat
+            if(chat==null){
+                val list = ArrayList<Message>()
+                list.add(message)
+                val newChat = Chat(messages = list,userId = receiverUid,lastMsg = message)
+                viewModel.insertChat(newChat)
+            }
+            else{
+                chat.messages?.add(message)
+                viewModel.updateChat(chat)
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
         val map = HashMap<String,Any>()
         map["status"] = "Online"
-        map["room"] = receiverUid!!
+        map["room"] = receiverUid
         dataBase.reference.child("Presence").child(mAuth.uid!!).updateChildren(map)
 
     }
@@ -209,36 +207,56 @@ class ChatActivity : AppCompatActivity() {
         map["room"] = ""
         dataBase.reference.child("Presence").child(mAuth.uid!!).updateChildren(map)
     }
-
-    private  fun sendMessage(message: Message){
-        val map = HashMap<String,String>()
-        map["lastMsg"] = message.message
-        map["time"] = message.timeStamp.toString()
-        dataBase.reference.child("Chats").child(senderRoom).updateChildren(map as Map<String, Any>)
-        dataBase.reference.child("Chats").child(receiverRoom).updateChildren(map as Map<String, Any>)
-       val randomKey = dataBase.reference.push().key
-            message.messageId = randomKey.toString()
-
-        dataBase.reference
-            .child("Chats")
-            .child(senderRoom)
-            .child("Messages")
-            .child(randomKey.toString())
-            .setValue(message)
-
-        dataBase.reference
-            .child("Chats")
-            .child(receiverRoom)
-            .child("Messages")
-            .child(randomKey.toString())
-            .setValue(message)
-        if(!flag) {
-            if (CurrentUser.user != null) {
-                sendNotification(CurrentUser.user!!.userName, message.message)
-            } else {
-                sendNotification(name, message.message)
-            }
-        }
+    override fun onStop() {
+        super.onStop()
+        isStopped = true
+    }
+    private fun sendMessage(message: Message){
+       GlobalScope.launch {
+           val randomKey = dataBase.reference.push().key
+           message.messageId = randomKey.toString()
+           val map = HashMap<String, Any>()
+           map["lastMsg"] = message
+           messageList.add(message)
+           withContext(Dispatchers.Main) {
+               adapter.notifyItemInserted(messageList.size - 1)
+               binding.chatRecycle.smoothScrollToPosition(messageList.size-1)
+           }
+           dataBase.reference.child("Chats")
+               .child(receiverUid)
+               .child(mAuth.uid!!)
+               .updateChildren(map)
+           dataBase.reference.child("Chats")
+               .child(mAuth.uid!!)
+               .child(receiverUid)
+               .updateChildren(map)
+           dataBase.reference
+               .child("Chats")
+               .child(receiverUid)
+               .child(mAuth.uid!!)
+               .child("messages")
+               .child(randomKey.toString())
+               .setValue(message)
+           viewModel.updateModMessage(ModMessage(receiverUid,true,message))
+           val chat: Chat? = viewModel.getRepository().getChatOfUser(receiverUid).chat
+           if(chat==null){
+               val list = ArrayList<Message>()
+               list.add(message)
+               val newChat = Chat(messages = list,userId = receiverUid,lastMsg = message)
+               viewModel.insertChat(newChat)
+           }
+           else{
+               chat.messages?.add(message)
+               viewModel.updateChat(chat)
+           }
+           if (!flag) {
+               if (CurrentUser.user != null) {
+                   sendNotification(CurrentUser.user!!.userName, message.message)
+               } else {
+                   sendNotification(name, message.message)
+               }
+           }
+       }
     }
 
     private fun sendNotification(name: String?, message: String) {
@@ -295,9 +313,12 @@ class ChatActivity : AppCompatActivity() {
 
     private fun putStatus(downloadUri: Uri?, date: String): Boolean {
       if(downloadUri==null)return false
-        val message = Message(adapter.getSize(),"",date.toLong(),mAuth.uid!!,imageUri = downloadUri.toString())
+        val message = Message(message = "",timeStamp = date.toLong(),senderId = mAuth.uid!!,imageUri = downloadUri.toString())
         sendMessage(message)
-          return true
+        return true
+    }
+    companion object{
+        var isStopped = false
     }
 
 }
