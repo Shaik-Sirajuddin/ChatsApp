@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.application'
+    id 'org.jetbrains.kotlin.jvm' version "1.4.10"
     id 'kotlin-android'
 }
 apply plugin: 'com.android.application'
@@ -7,10 +7,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlinx-serialization'
 apply plugin: 'kotlin-kapt'
+
 android {
     compileSdk 31
-
-
     defaultConfig {
         applicationId "com.chatsapp.www"
         minSdk 21
